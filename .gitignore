@@ -1,0 +1,42 @@
+
+# DLLs compiladas
+*.dll
+
+# Arquivos executaveis
+*.exe
+
+# Arquivos de debug
+*.pdb
+*.mdb
+
+# Diretorios de compilacao
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Arquivos temporarios
+*.tmp
+*.cache
+*.log
+
+# Pacotes NuGet
+packages/
+*.nupkg
+
+# Resultados de testes
+TestResults/
+coverage/
+
+# Arquivos de publicacao
+publish/
