@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace obamart.Models
 {
     public class Cliente
     {
-        public string Nome { get; set; }
+        [Required, MinLength(5), MaxLength(80)]
+        public required string Nome { get; set; }
 
+        [Required, StringLength(11)]
         public string Cpf { get; set; }
 
+        [Required, MaxLength(100), EmailAddress]
         public string Email { get; set; }
 
-        public DateTime DataNascimento { get; set; }
+        [Required]
+        public required DateTime DataNascimento { get; set; }
 
+        [Range(18, 90)]
         public int Idade
         {
             get
