@@ -27,5 +27,20 @@ namespace Obamart.Api.Controllers
             if (sucesso) return Ok(cliente);
             return UnprocessableEntity(erros);
         }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult Atualizar(Guid id, [FromBody] Cliente cliente)
+        {
+            if (service.Atualizar(id, cliente, out var erros)) return NoContent();
+            if (erros.Count == 0) return NotFound();
+            return UnprocessableEntity(erros);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public IActionResult Excluir(Guid id)
+        {
+            if (!service.Excluir(id)) return NotFound();
+            return NoContent();
+        }
     }
 }

@@ -51,6 +51,35 @@ namespace obamart.Services
             return true;
         }
 
+        public bool Atualizar(Guid id, Cliente cliente, out List<ValidationResult> erros)
+        {
+            var existente = context.Cliente.Find(id);
+            if (existente == null)
+            {
+                erros = new List<ValidationResult>();
+                return false;
+            }
+
+            if (!Validar(cliente, out erros)) return false;
+
+            existente.Nome = cliente.Nome;
+            existente.Cpf = cliente.Cpf;
+            existente.Email = cliente.Email;
+            existente.DataNascimento = cliente.DataNascimento.Date.ToUniversalTime();
+            context.SaveChanges();
+            return true;
+        }
+
+        public bool Excluir(Guid id)
+        {
+            var cliente = context.Cliente.Find(id);
+            if (cliente == null) return false;
+
+            context.Cliente.Remove(cliente);
+            context.SaveChanges();
+            return true;
+        }
+
         public bool Validar(Cliente cliente, out List<ValidationResult> erros)
         {
             var context = new ValidationContext(cliente);
