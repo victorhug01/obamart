@@ -16,6 +16,7 @@ namespace obamart.Contexts
         public ObamartDbContext(DbContextOptions opt) : base(opt) { }
 
         public DbSet<Cliente> Cliente => Set<Cliente>();
+        public DbSet<Divida> Divida => Set<Divida>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
