@@ -84,8 +84,31 @@ namespace obamart.Services
         {
             var context = new ValidationContext(cliente);
             erros = new List<ValidationResult>();
-            return Validator.TryValidateObject(cliente, context, erros, true);
+            Validator.TryValidateObject(cliente, context, erros, true);
 
+            if (!string.IsNullOrWhiteSpace(cliente.Cpf) && !CpfValido(cliente.Cpf))
+                erros.Add(new ValidationResult("CPF inválido.", new[] { nameof(Cliente.Cpf) }));
+
+            return erros.Count == 0;
+        }
+
+        private static bool CpfValido(string cpf)
+        {
+            if (cpf.Length != 11 || cpf.Any(c => c < '0' || c > '9') || cpf.All(c => c == cpf[0]))
+                return false;
+
+            for (int digito = 9; digito <= 10; digito++)
+            {
+                int soma = 0;
+                for (int i = 0; i < digito; i++)
+                    soma += (cpf[i] - '0') * (digito + 1 - i);
+
+                int resto = soma % 11;
+                int esperado = resto < 2 ? 0 : 11 - resto;
+                if (cpf[digito] - '0' != esperado) return false;
+            }
+
+            return true;
         }
     }
 }
