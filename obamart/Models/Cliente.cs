@@ -7,6 +7,8 @@ namespace obamart.Models
 {
     public class Cliente
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Required, MinLength(5), MaxLength(80)]
         public required string Nome { get; set; }
 
