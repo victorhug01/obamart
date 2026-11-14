@@ -40,3 +40,6 @@ coverage/
 
 # Arquivos de publicacao
 publish/
+
+# Configuracao local
+Obamart.Api/appsettings.Development.json
