@@ -29,6 +29,19 @@ namespace obamart.Contexts
             entityCliente.Property(c => c.Cpf).HasColumnName("cliente_cpf");
             entityCliente.Property(c => c.DataNascimento).HasColumnName("cliente_datanascimento");
             entityCliente.Property(c => c.Email).HasColumnName("cliente_email");
+
+            var entityDivida = modelBuilder.Entity<Divida>();
+
+            entityDivida.ToTable("divida");
+            entityDivida.HasKey(d => d.Id);
+            entityDivida.Property(d => d.Id).HasColumnName("divida_id");
+            entityDivida.Property(d => d.ClienteId).HasColumnName("cliente_id");
+            entityDivida.Property(d => d.Valor).HasColumnName("divida_valor");
+            entityDivida.Property(d => d.Situacao).HasColumnName("divida_situacao");
+            entityDivida.Property(d => d.DataCriacao).HasColumnName("divida_datacriacao");
+            entityDivida.Property(d => d.DataPagamento).HasColumnName("divida_datapagamento");
+            entityDivida.HasOne<Cliente>().WithMany().HasForeignKey(d => d.ClienteId);
+
             base.OnModelCreating(modelBuilder);
         }
 
