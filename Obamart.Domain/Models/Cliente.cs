@@ -19,7 +19,7 @@ namespace obamart.Models
         public string Email { get; set; }
 
         [Required]
-        public required DateTime DataNascimento { get; set; }
+        public required DateOnly DataNascimento { get; set; }
 
         public int Idade
         {
@@ -27,7 +27,7 @@ namespace obamart.Models
             {
                 var dataAtual = DateTime.Today;
                 var idade = dataAtual.Year - DataNascimento.Year;
-                if (DataNascimento.Date > dataAtual.AddYears(-idade)) --idade;
+                if (DataNascimento.Year > dataAtual.AddYears(-idade).Year) --idade;
                 return idade;
             }
         }

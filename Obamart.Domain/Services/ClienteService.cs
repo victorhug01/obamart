@@ -34,7 +34,6 @@ namespace obamart.Services
         public bool Criar(Cliente cliente, out List<ValidationResult> erros)
         {
             if (!Validar(cliente, out erros)) return false;
-            cliente.DataNascimento = DateTime.SpecifyKind(cliente.DataNascimento.Date, DateTimeKind.Utc);
             context.Cliente.Add(cliente);
             return Salvar(erros);
         }
@@ -51,7 +50,7 @@ namespace obamart.Services
             existente.Nome = cliente.Nome;
             existente.Cpf = cliente.Cpf;
             existente.Email = cliente.Email;
-            existente.DataNascimento = DateTime.SpecifyKind(cliente.DataNascimento.Date, DateTimeKind.Utc);
+            existente.DataNascimento = cliente.DataNascimento;
             return Salvar(erros);
         }
 
@@ -72,7 +71,7 @@ namespace obamart.Services
                 erros.Add(new ValidationResult("CPF inválido.", new[] { nameof(Cliente.Cpf) }));
             if (!string.IsNullOrWhiteSpace(cliente.Cpf) && context.Cliente.Any(c => c.Cpf == cliente.Cpf && c.Id != id))
                 erros.Add(new ValidationResult("CPF já cadastrado.", new[] { nameof(Cliente.Cpf) }));
-            if (cliente.DataNascimento == default || cliente.DataNascimento.Date > DateTime.Today)
+            if (cliente.DataNascimento == default || cliente.DataNascimento > DateOnly.FromDateTime(DateTime.Today))
                 erros.Add(new ValidationResult("Data de nascimento inválida.", new[] { nameof(Cliente.DataNascimento) }));
             return erros.Count == 0;
         }
@@ -101,5 +100,5 @@ namespace obamart.Services
         }
     }
 
-    public record ClienteResumo(Guid Id, string Nome, string Cpf, string Email, DateTime DataNascimento, int Idade, decimal TotalDividas);
+    public record ClienteResumo(Guid Id, string Nome, string Cpf, string Email, DateOnly DataNascimento, int Idade, decimal TotalDividas);
 }
