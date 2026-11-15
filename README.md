@@ -1,35 +1,83 @@
 # Obamart
 
-API em .NET 10 para cadastro de clientes e controle de dívidas, com PostgreSQL.
+O Obamart é uma aplicação para cadastro de clientes e acompanhamento de suas contas. A interface web permite consultar clientes, registrar dívidas e acompanhar pagamentos; uma API .NET aplica as regras de negócio e armazena os dados em PostgreSQL.
 
-## Execução
+## Funcionalidades
 
-1. Instale o SDK .NET 10 e o PostgreSQL e crie um banco vazio chamado `obamart`.
-2. Execute `psql -U postgres -d obamart -f schema.sql` a partir da raiz do projeto.
-3. Configure a conexão, por exemplo no PowerShell:
+- Cadastro, busca, edição e exclusão de clientes.
+- Registro, edição e exclusão de contas de cada cliente.
+- Registro de pagamento e consulta ao histórico de contas.
+- Listagens paginadas e resumo dos valores em aberto na página atual.
+- Interface responsiva com temas claro e escuro.
 
-   ```powershell
-   $env:ConnectionStrings__Postgres = 'Host=localhost;Port=5432;Database=obamart;Username=postgres;Password=SUA_SENHA'
-   dotnet run --project Obamart.Api --launch-profile http
-   ```
+Cada CPF pode ser cadastrado uma única vez, e cada cliente pode ter apenas uma dívida em aberto. A exclusão de um cliente também remove suas dívidas.
 
-A API estará disponível em `http://localhost:5042`. Em desenvolvimento, a especificação OpenAPI está em `/openapi/v1.json`. O script cria as tabelas em um banco vazio; para um banco existente, adapte o schema e resolva CPFs duplicados ou dívidas em aberto duplicadas antes de criar os índices.
+## Interface web
 
-## Endpoints
+As capturas abaixo mostram a aplicação em execução. Os dados pessoais exibidos na lista foram substituídos por exemplos fictícios nas imagens.
 
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| GET | `/api/cliente?pesquisa=ana&page=1` | Busca por nome; 10 por página, ordenados pelo total em aberto. |
-| GET | `/api/cliente/{id}` | Consulta um cliente. |
-| POST | `/api/cliente` | Cadastra um cliente. |
-| PUT | `/api/cliente/{id}` | Atualiza um cliente. |
-| DELETE | `/api/cliente/{id}` | Exclui um cliente e suas dívidas. |
-| GET | `/api/divida?clienteId={id}&page=1` | Lista dívidas de um cliente, 20 por página. |
-| POST | `/api/divida` | Cadastra uma dívida. |
-| PUT | `/api/divida/{id}` | Atualiza uma dívida. |
-| PATCH | `/api/divida/{id}/pagamento` | Marca uma dívida como paga. |
-| DELETE | `/api/divida/{id}` | Exclui uma dívida. |
+**Lista de clientes e resumo da página**
 
-Exemplo de cliente: `{"nome":"Ana Silva","cpf":"52998224725","dataNascimento":"1990-05-15","email":"ana@example.com"}`. O e-mail é opcional. A resposta da listagem inclui idade e `totalDividas`, a soma das dívidas não pagas.
+![Tela de clientes e contas do Obamart](docs/images/web-clientes.png)
 
-Exemplo de dívida: `{"clienteId":"00000000-0000-0000-0000-000000000000","valor":50.00,"situacao":false}`; substitua o identificador pelo de um cliente existente. O servidor define a data de criação e a data de pagamento. Cada CPF só pode ser cadastrado uma vez e cada cliente pode ter apenas uma dívida em aberto. Erros de validação retornam HTTP 422; registros inexistentes nas operações individuais retornam 404.
+**Cadastro de cliente**
+
+![Formulário de cadastro de cliente do Obamart](docs/images/web-cadastro.png)
+
+## Tecnologias e organização
+
+| Caminho | Responsabilidade |
+| --- | --- |
+| `Obamart.Web/` | Interface com Next.js, React e TypeScript. |
+| `Obamart.Api/` | API HTTP em .NET 10. |
+| `Obamart.Domain/` | Modelos, serviços e acesso aos dados. |
+| `schema.sql` | Criação das tabelas e índices no PostgreSQL. |
+| `docs/` | Documentação detalhada da API e da interface. |
+
+O navegador acessa a aplicação Next.js, que encaminha as requisições `/backend/` para a API. A API utiliza o PostgreSQL para persistir os dados.
+
+## Executar localmente
+
+### Pré-requisitos
+
+- SDK .NET 10.
+- PostgreSQL e o cliente `psql`.
+- Node.js e npm.
+
+### 1. Preparar o banco
+
+Crie um banco vazio chamado `obamart` e execute, na raiz do repositório:
+
+```powershell
+psql -U postgres -d obamart -f schema.sql
+```
+
+O script é destinado a um banco vazio. Para um banco existente, consulte as observações em [docs/API.md](docs/API.md).
+
+### 2. Iniciar a API
+
+Na raiz do repositório, configure a conexão com suas credenciais e inicie a API:
+
+```powershell
+$env:ConnectionStrings__Postgres = 'Host=localhost;Port=5432;Database=obamart;Username=postgres;Password=SUA_SENHA'
+dotnet run --project Obamart.Api --launch-profile http
+```
+
+A API estará disponível em `http://localhost:5042`. Em desenvolvimento, sua especificação OpenAPI fica em `http://localhost:5042/openapi/v1.json`.
+
+### 3. Iniciar a interface
+
+Em outro terminal:
+
+```powershell
+cd Obamart.Web
+npm install
+npm run dev
+```
+
+Acesse `http://localhost:3000`. Por padrão, a interface usa a API em `http://localhost:5042`; para outro endereço, configure `API_URL` em `Obamart.Web/.env.local` e reinicie o Next.js. Se o PowerShell bloquear scripts, use `npm.cmd` no lugar de `npm`.
+
+## Documentação
+
+- [API: configuração, endpoints e regras](docs/API.md)
+- [Web: estrutura, integração e funcionamento da interface](docs/WEB.md)
