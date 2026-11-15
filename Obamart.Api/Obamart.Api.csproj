@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\obamart\obamart.csproj" />
+    <ProjectReference Include="..\Obamart.Domain\Obamart.Domain.csproj" />
   </ItemGroup>
 
 </Project>

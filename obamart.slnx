@@ -1,4 +1,4 @@
 <Solution>
   <Project Path="Obamart.Api/Obamart.Api.csproj" Id="4e72e8c6-9689-42e5-8778-97c18c839d56" />
-  <Project Path="obamart/obamart.csproj" />
+  <Project Path="Obamart.Domain/Obamart.Domain.csproj" />
 </Solution>
