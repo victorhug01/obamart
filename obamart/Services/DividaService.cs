@@ -1,6 +1,8 @@
 using obamart.Contexts;
 using obamart.Models;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace obamart.Services
 {
@@ -27,8 +29,7 @@ namespace obamart.Services
             divida.DataCriacao = DateTime.UtcNow;
             divida.DataPagamento = divida.Situacao ? DateTime.UtcNow : null;
             context.Divida.Add(divida);
-            context.SaveChanges();
-            return true;
+            return Salvar(erros);
         }
 
         public bool Atualizar(Guid id, Divida divida, out List<ValidationResult> erros)
@@ -46,8 +47,7 @@ namespace obamart.Services
             existente.Valor = divida.Valor;
             existente.DataPagamento = divida.Situacao ? existente.DataPagamento ?? DateTime.UtcNow: null;
             existente.Situacao = divida.Situacao;
-            context.SaveChanges();
-            return true;
+            return Salvar(erros);
         }
 
         public bool MarcarPagamento(Guid id)
@@ -89,6 +89,16 @@ namespace obamart.Services
                 erros.Add(new ValidationResult("O cliente já possui uma dívida em aberto.", new[] { nameof(Divida.ClienteId) }));
 
             return erros.Count == 0;
+        }
+
+        private bool Salvar(List<ValidationResult> erros)
+        {
+            try { context.SaveChanges(); return true; }
+            catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: "ux_divida_cliente_aberta" })
+            {
+                erros.Add(new ValidationResult("O cliente já possui uma dívida em aberto.", new[] { nameof(Divida.ClienteId) }));
+                return false;
+            }
         }
     }
 }

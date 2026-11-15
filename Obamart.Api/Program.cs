@@ -9,6 +9,7 @@ builder.Services.AddOpenApi();
 
 // configurando os serviços da aplicação
 builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<DividaService>();
 
 var connstring = builder.Configuration.GetConnectionString("Postgres");
 builder.Services.AddDbContext<ObamartDbContext>(o => o.UseNpgsql(connstring));

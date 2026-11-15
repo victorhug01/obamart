@@ -14,10 +14,17 @@ namespace Obamart.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult Listar([FromQuery] string? pesquisa, [FromQuery] int page = 1)
         {
-            var alunos = service.Consultar();
-            return Ok(alunos);
+            if (page < 1) return BadRequest("A página deve ser maior que zero.");
+            return Ok(service.Consultar(pesquisa, page));
+        }
+
+        [HttpGet("{id:guid}")]
+        public IActionResult Consultar(Guid id)
+        {
+            var cliente = service.ConsultarPorId(id);
+            return cliente == null ? NotFound() : Ok(cliente);
         }
 
         [HttpPost]

@@ -15,20 +15,19 @@ namespace obamart.Models
         [Required, StringLength(11)]
         public string Cpf { get; set; }
 
-        [Required, MaxLength(100), EmailAddress]
+        [MaxLength(100), EmailAddress]
         public string Email { get; set; }
 
         [Required]
         public required DateTime DataNascimento { get; set; }
 
-        [Range(18, 90)]
         public int Idade
         {
             get
             {
                 var dataAtual = DateTime.Today;
                 var idade = dataAtual.Year - DataNascimento.Year;
-                if(dataAtual > DataNascimento.AddYears(-idade)) --idade;
+                if (DataNascimento.Date > dataAtual.AddYears(-idade)) --idade;
                 return idade;
             }
         }
